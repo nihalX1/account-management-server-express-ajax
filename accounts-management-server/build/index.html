@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+          
+          <div class="signup">Sign Up</div>
+          <div class="login">Log In</div>
+          
+           <div class="signup-form">
+               <form id="Form1">
+              <input type="text" id="register-Email" placeholder="Your Email Address" class="input" required><br />
+              <input type="text" id="register-Name" placeholder="Choose a name" class="input" required><br />
+              <input type="password" id="register-Password" placeholder="Choose a Password" class="input" required><br />
+              <input class="btn" type="submit" id="register" value="Register">
+               </form>
+           </div>
+          
+          <div class="login-form">
+              <form id="Form2">
+              <input type="text" id="login-Name" placeholder="Enter your Username" class="input" required/><br />
+              <input type="password" id="login-Password" placeholder="Password" class="input" required/><br />
+              <input class="btn" type="submit" id="login" value="Login">
+              </form>
+           </div>
+          
+        </div>
+      </div>
+
+      <script>
+        $(document).ready(function(){
+            
+        // click on REGISTER BUTTON
+            $("#register").on('click', function(){
+
+                var name = document.getElementById("register-Name").value;
+                var email = document.getElementById("register-Email").value;
+                var password = document.getElementById("register-Password").value;
+                //console.log(name);
+
+                if(name!="" && email!="" && password!=""){
+                    //console.log(document.getElementById("register-Email").value);
+                    var postData = {
+                    "Name": name,
+                    "Email": email,
+                    "Password": password
+                    };
+                    // send ajax
+
+                    $.ajax({
+                        url: 'http://localhost:8003/accounts/register',
+                        type: "POST",
+                        data: JSON.stringify(postData),
+                        contentType: 'application/json',
+                        success : function(result) {
+                            
+                            $(".input").val("");
+                            
+                            console.log(result);
+                            alert("SUCCESSFULLY REGISTERED");
+                        },
+                        error: function(xhr, resp, text) {
+                            alert("UNABLE TO REGISTER as User with same name may be already registered");
+                            console.log("UNABLE TO REGISTER");
+                            console.log(xhr, resp, text);
+                        }
+                    })
+                }
+            });
+
+            // click on LOGIN BUTTON
+            $("#login").on('click', function(){
+                //console.log(document.getElementById("login-Name").value);
+
+                var name = document.getElementById("login-Name").value;
+                var password = document.getElementById("login-Password").value
+
+                if(name!="" && password!=""){
+
+                    var postData = {
+                    "Name": name,
+                    "Password": password
+                    };
+
+                    // send ajax
+
+                    $.ajax({
+                        url: 'http://localhost:8003/accounts/validate',
+                        type: "POST",
+                        data: JSON.stringify(postData),
+                        contentType: 'application/json',
+                        success : function(result) {
+                            // you can see the result from the console
+                            // tab of the developer tools
+                            $(".input").val("");
+                            console.log("SUCCESS for validation");
+                            console.log(result);
+                            alert("SUCCESSFULLY LOGGED IN");
+                        },
+                        error: function(xhr, resp, text) {
+                            console.log("UNABLE To verifiy login details");
+                            console.log(xhr, resp, text);
+                            alert("WRONG USERNAME OR PASSWORD");
+                        }
+                    })
+                }
+            });
+
+        });
+
+        $(".login-form").hide();
+            $(".login").css("background", "none");
+
+            $(".login").click(function(){
+            $(".signup-form").hide();
+            $(".login-form").show();
+            $(".signup").css("background", "none");
+            $(".login").css("background", "#fff");
+            });
+
+            $(".signup").click(function(){
+            $(".signup-form").show();
+            $(".login-form").hide();
+            $(".login").css("background", "none");
+            $(".signup").css("background", "#fff");
+            });
+
+            $("#Form1").submit(function(event){
+            event.preventDefault()
+            })
+            $("#Form2").submit(function(event){
+            event.preventDefault()
+            })
+    </script>
+    <!-- <script>
+        $(document).ready(function(){
+            // $(".login-form").hide();
+            // $(".login").css("background", "none");
+
+            // $(".login").click(function(){
+            // $(".signup-form").hide();
+            // $(".login-form").show();
+            // $(".signup").css("background", "none");
+            // $(".login").css("background", "#fff");
+            // });
+
+            // $(".signup").click(function(){
+            // $(".signup-form").show();
+            // $(".login-form").hide();
+            // $(".login").css("background", "none");
+            // $(".signup").css("background", "#fff");
+            // });
+
+            // $(".btn").click(function(){
+            // $(".input").val("");
+            // });
+        });
+    </script> -->
+
+    
+</body>
+</html>
