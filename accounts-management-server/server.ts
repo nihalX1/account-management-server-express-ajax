@@ -7,6 +7,7 @@ import {UserDataMemoryRepository} from './userDataMemoryRepository'
 import { User } from './userModel';
 import bodyParser from 'body-parser'
 import path from 'path'
+import cors from 'cors';
 
 const server=express();
 const PORT=8003;
@@ -16,6 +17,7 @@ const accountServiceref=new AccountDataService(new UserDataMemoryRepository());
 //Configure - middleware /filter
 server.use(bodyParser.json());
 server.use(express.static(__dirname + '/public'))
+server.use(cors()); //middleware to send responses for CORS Request
 
 server.get("/index.html", (req,res)=>{
     res.sendFile(path.join(__dirname+'/index.html'));
@@ -39,15 +41,15 @@ let userObj=new User(req.body.name,req.body.password,req.body.email);
 
     let credentials=req.body; 
     if(credentials){
-        if(accountServiceref.register(req.body)){
-            res.status(201).json({message:"Successfully Registered User"});
+        if(accountServiceref.register(userObj)){
+            res.status(201).json({message:"Successfully Registered User "+req.body.name});
         }
         else{
-            res.status(403).json({message:"Unable to register as username already exists"});
+            res.status(403).json({message:"Unable to register as username already exists "+req.body.name});
         }
     }
     else{
-        res.status(400).json({messgae:"Bad Request"});
+        res.status(400).json({message:"Bad Request"});
     }
 });
 

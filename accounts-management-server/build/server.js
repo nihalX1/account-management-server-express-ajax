@@ -11,12 +11,14 @@ var userDataMemoryRepository_1 = require("./userDataMemoryRepository");
 var userModel_1 = require("./userModel");
 var body_parser_1 = __importDefault(require("body-parser"));
 var path_1 = __importDefault(require("path"));
+var cors_1 = __importDefault(require("cors"));
 var server = express_1.default();
 var PORT = 8003;
 var accountServiceref = new accountDataService_1.AccountDataService(new userDataMemoryRepository_1.UserDataMemoryRepository());
 //Configure - middleware /filter
 server.use(body_parser_1.default.json());
 server.use(express_1.default.static(__dirname + '/public'));
+server.use(cors_1.default()); //middleware to send responses for CORS Request
 server.get("/index.html", function (req, res) {
     res.sendFile(path_1.default.join(__dirname + '/index.html'));
 });
@@ -29,15 +31,15 @@ server.post("/accounts/register", function (req, res) {
     var userObj = new userModel_1.User(req.body.name, req.body.password, req.body.email);
     var credentials = req.body;
     if (credentials) {
-        if (accountServiceref.register(req.body)) {
-            res.status(201).json({ message: "Successfully Registered User" });
+        if (accountServiceref.register(userObj)) {
+            res.status(201).json({ message: "Successfully Registered User " + req.body.name });
         }
         else {
-            res.status(403).json({ message: "Unable to register as username already exists" });
+            res.status(403).json({ message: "Unable to register as username already exists " + req.body.name });
         }
     }
     else {
-        res.status(400).json({ messgae: "Bad Request" });
+        res.status(400).json({ message: "Bad Request" });
     }
 });
 server.post("/accounts/validate", function (req, res) {
